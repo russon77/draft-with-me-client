@@ -53,8 +53,8 @@ def main(application):
             # update server with current state
             current_state = event.data
 
-            print("Uploading initial status...")
-            application.update_status("Uploading current status...")
+            print("Uploading status...")
+            application.update_status("Uploading status...")
 
             # if hero is set, then draft has started and we can process the cards on screen
             if current_state.hero:
@@ -65,8 +65,8 @@ def main(application):
                 update_data_on_server(session_data, current_state.hero, "hero")
                 update_data_on_server(session_data, current_state.drafted, "drafted")
 
-            print("Finished uploading current status!")
-            application.update_status("Finished uploading current status!")
+            print("Finished uploading status!")
+            application.update_status("Finished uploading status!")
 
         elif event.type == ArenaEvent.DRAFT_ENDED:
             # update server with drafted
