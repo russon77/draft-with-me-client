@@ -38,28 +38,23 @@ def get_cards_from_arena_image(img):
 if _platform == "linux" or _platform == "linux2":
     # todo linux
     pass
+
 elif _platform == "darwin":
     # todo os x
-    pass
-elif _platform == "win32":
-    import win32gui
+    raise NotImplementedError("Screen grab and log finder methods have not been implemented for OS X.")
 
+elif _platform == "win32":
+    import win32gui, psutil, os
 
     def window_enum_callback(hwnd, extras):
         rect = win32gui.GetWindowRect(hwnd)
         x = rect[0]
         y = rect[1]
         if win32gui.GetWindowText(hwnd) == "Hearthstone":
-            # tmp = ImageGrab.grab()
+            # since the callback doesn't actually return anything, we use an object to "return" the data
             extras["image"] = ImageGrab.grab((x, y, rect[2], rect[3]))
-            # extras["image"] = tmp.crop((x, y, rect[2], rect[3]))
-            # debug -- delete me!
-            # extras["image"].save("tmp/window_initial.png")
             return
 
-    def get_hearthstone_log_folder():
-        # todo fill me in across the board
-        pass
 
     def get_hearthstone_window():
         extras = {"image": None}
@@ -69,4 +64,11 @@ elif _platform == "win32":
             return extras["image"]
 
         raise WindowNotFoundException
+
+    def get_hearthstone_log_folder():
+        for proc in psutil.process_iter():
+            if proc.name() == "Hearthstone.exe":
+                return os.path.join(os.path.dirname(proc.exe()), "Logs")
+
+        return None
 

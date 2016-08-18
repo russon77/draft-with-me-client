@@ -12,9 +12,14 @@ Requirements
 - hearthstonecarddetector
 - hearthstonearenalogwatcher
 - PIL / Pillow
-- Windows: win32gui
+- Windows: win32gui, psutil
 - Mac: todo
-- Linux: todo
+
+Build
+^^^^^
+    >>> pyinstall main.py
+
+Or if you are feeling frisky, try the ``--onefile`` option!
 
 License
 ^^^^^^^
