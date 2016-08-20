@@ -13,7 +13,7 @@ Requirements
 - hearthstonearenalogwatcher
 - PIL / Pillow
 - Windows: win32gui, psutil
-- Mac: todo
+- Mac: applescript, pyobjc. also need to give application Accessibility privileges.
 
 Build
 ^^^^^
