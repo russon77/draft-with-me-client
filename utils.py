@@ -40,13 +40,44 @@ if _platform == "linux" or _platform == "linux2":
     pass
 
 elif _platform == "darwin":
-    # todo os x
-    raise NotImplementedError("Screen grab and log finder methods have not been implemented for OS X.")
+    """
+    in order to implement intended functionality on OS X, app MUST be given Accessibility permissions. This is in order
+    to get the window position / size. Then, we can use Pillow's ImageGrab module as usual.
+
+    this is because Hearthstone does not implement required functionality to use Applescript out of the box.
+
+    thanks to
+        http://stackoverflow.com/questions/12021362/cannot-get-or-set-the-window-size-of-some-apps-using-applescript
+    and
+        http://macosxautomation.com/training/applescript/11.html
+    """
+    import applescript
+
+    def get_hearthstone_window():
+        # todo adjust for window bar on top -- about 20 pixels
+
+        script_contents = '''
+        tell application "System Events" to tell application process "Hearthstone"
+            get %s of window 1
+        end tell
+        '''
+        position_script = applescript.AppleScript(script_contents % 'position')
+        x, y = position_script.run()
+
+        size_script = applescript.AppleScript(script_contents % 'size')
+        width, height = size_script.run()
+
+        return ImageGrab.grab((x, y, x + width, y + height))
+
+    def get_hearthstone_log_folder():
+        return "/Applications/Hearthstone/Logs"
+
+    # NOTE that the return from get window size returns extra Y pixels for application "bar" (22 on my machine)
 
 elif _platform == "win32":
     import win32gui, psutil, os
 
-    def window_enum_callback(hwnd, extras):
+    def _window_enum_callback(hwnd, extras):
         rect = win32gui.GetWindowRect(hwnd)
         x = rect[0]
         y = rect[1]
@@ -58,7 +89,7 @@ elif _platform == "win32":
 
     def get_hearthstone_window():
         extras = {"image": None}
-        win32gui.EnumWindows(window_enum_callback, extras)
+        win32gui.EnumWindows(_window_enum_callback, extras)
 
         if extras["image"]:
             return extras["image"]
